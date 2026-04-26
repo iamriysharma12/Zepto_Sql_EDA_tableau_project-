@@ -1,0 +1,94 @@
+create database Zepto_data_project;
+
+use Zepto;
+
+select * from zepto_v2;
+select * from zepto_v1;
+------------------------------------------------------------------
+------------------------------------------------------------------
+---Phase 1 — Data profiling
+---Row count · column types · NULL counts · value ranges
+------------------------------------------------------------------
+------------------------------------------------------------------
+
+-- 1. Total row count
+select count(*) as total_rows from zepto_v2;
+
+-- 2.find the null values in each columns
+SELECT 
+      SUM(CASE when Category is null THEN 1 ELSE 0 END) AS NULL_CATEGORY,
+      SUM(CASE WHEN name IS NULL THEN 1 ELSE 0 END) AS NULL_NAME,
+      SUM(CASE WHEN discountPercent IS NULL THEN 1 ELSE 0 END) AS NULL_discountPercent,
+      SUM(CASE WHEN availableQuantity IS NULL THEN 1 ELSE 0 END) AS NULL_availableQuantity,
+      SUM(CASE WHEN discountedSellingPrice IS NULL THEN 1 ELSE 0 END) AS NULL_discountedSellingPrice,
+      SUM(CASE WHEN weightInGms IS NULL THEN 1 ELSE 0 END) AS NULL_weightInGms,
+      SUM(CASE WHEN out_of_stock IS NULL THEN 1 ELSE 0 END) AS NULL_out_of_stock,
+      SUM(CASE WHEN quantity IS NULL THEN 1 ELSE 0 END) AS NULL_quantity
+      from zepto_v2;
+
+-- 3. Min, Max, Avg for numeric columns
+select
+     min(mrp) as minimum_mrp , MAX(mrp) as maximum_mrp , AVg(mrp) as average_mrp,
+     min(discountPercent) as minimum_discountPercent , MAX(discountPercent) as maximum_discountPercent,
+     AVg(discountPercent) as average_discountPercent,
+     min(discountedSellingPrice) as minimum_discountedSellingPrice , MAX(discountedSellingPrice) as maximum_discountedSellingPrice ,
+     AVg(discountedSellingPrice) as average_discountedSellingPrice
+From zepto_v2;
+
+select * from zepto_v2;
+
+
+--Distinct Categories count 
+Select Distinct Category as uniq_category from zepto_v2;
+
+select count(Distinct Category) as unique_category from zepto_v2;
+
+select Distinct name as unique_name from zepto_v2;
+
+select count(Distinct name) as unique_name from zepto_v2;
+
+select category , count(*) as COUNT
+from zepto_v2
+group by Category
+order by count desc;
+
+SELECT name, COUNT(*) AS count
+FROM zepto_v2
+GROUP BY name 
+ORDER BY count DESC;
+
+
+------------------------------------------------------------------
+------------------------------------------------------------------
+---Phase 2 — Missing values
+---NULL detection · IS NULL filters · COALESCE fixes · imputation
+------------------------------------------------------------------
+------------------------------------------------------------------
+
+-- 1. Find rows where MRP is NULL
+SELECT * FROM zepto_v2 WHERE mrp IS NULL;
+
+SELECT * FROM zepto_v2 WHERE discountPercent IS NULL;
+
+SELECT * FROM zepto_v2 WHERE discountedSellingPrice IS NULL;
+
+
+select * from zepto_v2;
+
+Phase 3 — Data quality checks (the real EDA)
+This is the heart of your project.
+3a — Duplicate rows
+
+
+------------------------------------------------------------------
+------------------------------------------------------------------
+---Phase 3 — Data quality checks (the real EDA)
+--This is the heart of your project.
+-- — Duplicate rows
+------------------------------------------------------------------
+------------------------------------------------------------------
+
+SELECT Category,name, mrp,discountPercent , discountedSellingPrice, weightInGms, COUNT(*) AS cnt
+FROM zepto_v2
+GROUP BY Category, name, mrp, discountPercent, discountedSellingPrice, weightInGms
+HAVING COUNT(*) > 1;
