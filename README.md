@@ -1,2 +1,1 @@
 # Zepto_Sql_EDA_tableau_visualtion_project-
-![Uploading image.png…]()
